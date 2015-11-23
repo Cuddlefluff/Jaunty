@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Jarle Leopold Moe</authors>
+    <owners>Jarle Leopold Moe</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>PostgreSQL support for Jaunty</description>
+    <releaseNotes>Initial release</releaseNotes>
+    <copyright>Copyright Jarle Leopold Moe 2015</copyright>
+    <tags>Jaunty Dapper ORM PostgreSql Postgre pgsql npgsql CRUD</tags>
+    <dependencies>
+      <dependency id="Jaunty" version="0.1.1.1" />
+    </dependencies>
+  </metadata>
+  
+</package>

@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jaunty", "Jaunty\Jaunty.csproj", "{99A0E638-30F1-41EC-9358-E97B8C191CB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jaunty.Tests", "Jaunty.Tests\Jaunty.Tests.csproj", "{53D4992F-0584-46A5-BC4B-DFD162E55834}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jaunty.SqlClient", "Jaunty.SqlClient\Jaunty.SqlClient.csproj", "{10B3AA81-FDC4-479A-8B80-52905830BA48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jaunty.PgSql", "Jaunty.PgSql\Jaunty.PgSql.csproj", "{00F5F02E-5DDD-413B-B8B0-212F7A1FD1AD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{653C4184-025D-4E51-8420-B011D36E91EA}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{99A0E638-30F1-41EC-9358-E97B8C191CB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99A0E638-30F1-41EC-9358-E97B8C191CB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99A0E638-30F1-41EC-9358-E97B8C191CB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99A0E638-30F1-41EC-9358-E97B8C191CB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53D4992F-0584-46A5-BC4B-DFD162E55834}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53D4992F-0584-46A5-BC4B-DFD162E55834}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53D4992F-0584-46A5-BC4B-DFD162E55834}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53D4992F-0584-46A5-BC4B-DFD162E55834}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10B3AA81-FDC4-479A-8B80-52905830BA48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10B3AA81-FDC4-479A-8B80-52905830BA48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10B3AA81-FDC4-479A-8B80-52905830BA48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10B3AA81-FDC4-479A-8B80-52905830BA48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00F5F02E-5DDD-413B-B8B0-212F7A1FD1AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00F5F02E-5DDD-413B-B8B0-212F7A1FD1AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00F5F02E-5DDD-413B-B8B0-212F7A1FD1AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00F5F02E-5DDD-413B-B8B0-212F7A1FD1AD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

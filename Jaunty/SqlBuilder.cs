@@ -1,0 +1,204 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+using System.Linq;
+
+namespace Jaunty
+{
+    public abstract class SqlBuilder<T> : ISqlBuilder<T>
+    {
+        readonly string _objectName;
+        readonly string _databaseName;
+        readonly string _schema;
+        readonly List<DataProperty> _properties;
+
+        /// <summary>
+        /// Creates a new instance of SqlBuilder
+        /// </summary>
+        public SqlBuilder()
+        {
+            var type = typeof(T);
+
+            _objectName = InitObjectName(type);
+            _databaseName = InitDatabaseName(type);
+            _schema = InitSchemaName(type);
+            _properties = new List<DataProperty>(InitProperties(type).OrderBy(a => a.Order));
+        }
+
+        /// <summary>
+        /// Gets the name of the table or view this object targets
+        /// </summary>
+        public string ObjectName => _objectName;
+
+        /// <summary>
+        /// Gets the schema this object is under
+        /// </summary>
+        public string Schema => _schema;
+
+        /// <summary>
+        /// Gets the name of the database this object is under
+        /// </summary>
+        public string DatabaseName => _databaseName;
+
+        /// <summary>
+        /// Gets an enumeration of all properties this object accesses
+        /// </summary>
+        public IEnumerable<DataProperty> Properties => _properties;
+
+
+        public virtual string[] ObjectFullPath
+        {
+            get
+            {
+                return new[] { DatabaseName, Schema, ObjectName }.Where(p => !string.IsNullOrEmpty(p)).ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the name of the table or view
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        protected virtual string InitObjectName(Type t)
+        {
+            var tableAttr = t.GetCustomAttribute<TableAttribute>();
+
+            if(tableAttr == null)
+            {
+                return t.Name;
+            }
+
+            return tableAttr.Name;
+
+        }
+
+        /// <summary>
+        /// Retrieves the name of the database target.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns>A name returned by the DatabaseAttribute, null if none is found</returns>
+        protected virtual string InitDatabaseName(Type t)
+        {
+            var databaseAttr = t.GetCustomAttribute<DataAnnotations.Schema.DatabaseAttribute>();
+
+            if(databaseAttr == null)
+            {
+                return null;
+            }
+
+            return databaseAttr.Database;
+        }
+
+        /// <summary>
+        /// Initializes schema name for this builder
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns>A schema supplied by the TableAttribute or null if none is found</returns>
+        protected virtual string InitSchemaName(Type t)
+        {
+            var tableAttr = t.GetCustomAttribute<TableAttribute>();
+
+            if(tableAttr == null)
+            {
+                // It should be up to each individual provider to determine default value
+                return null;
+            }
+
+            return tableAttr.Schema;
+
+        }
+
+        /// <summary>
+        /// Returns a list of all properties on the
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        protected virtual IEnumerable<DataProperty> InitProperties(Type t)
+        {
+            foreach (var property in t.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+            {
+                if (property.GetCustomAttribute<NotMappedAttribute>(true) != null)
+                    continue;
+
+
+                yield return InitProperty(property);
+            }
+        }
+
+        /// <summary>
+        /// Inspects a property and populates with relevant information
+        /// </summary>
+        /// <param name="property">Property to inspect</param>
+        /// <returns>A DataProperty object containing relevant information to the column</returns>
+        protected virtual DataProperty InitProperty(PropertyInfo property)
+        {
+            var attributes = property.GetCustomAttributes(true);
+
+            PropertyFlags flags = 0;    // default to normal
+            string columnName = property.Name;  // default to property name
+            int order = 0;  // default to "first" for everyone
+            string typeName = null; // default to don't care
+
+            foreach (var attr in attributes)
+            {
+                // Figure out if the property is a key
+                var keyAtt = attr as KeyAttribute;
+                
+                if (keyAtt != null)
+                {
+                    flags |= PropertyFlags.Key;
+                    continue;
+                }
+
+                // Find out if the property is set by code or generated by the database
+                // Like IDENTITY / AUTO_INCREMENT, DEFAULT, computed or a trigger
+                // In this case, we want to retrieve it, we just don't want to try to set it
+                var generated = attr as DatabaseGeneratedAttribute;
+
+                if (generated != null)
+                {
+                    // Anything other than None means that the property is populated on the database server
+                    // So in that case we need to set the DatabaseGenerated flag
+                    if (generated.DatabaseGeneratedOption != DatabaseGeneratedOption.None)
+                    {
+                        flags |= PropertyFlags.DatabaseGenerated;
+                    }
+
+                    continue;
+                }
+
+                // Get column information, like an alias, order
+                var column = attr as ColumnAttribute;
+
+                if(column != null)
+                {
+                    columnName = column.Name;
+                    // Order is typically only used for indexes (indices) in Entity Framework
+                    // We don't really care about indexes (indices) but since it's there we'll store it anyway
+                    order = column.Order;
+                    // Data type name. Again something we don't really care about, but
+                    // we'll store it just in case
+                    typeName = column.TypeName;
+                    continue;
+                }
+            }
+
+            return new DataProperty(property.Name, columnName, flags) { Order = order, TypeName = typeName };
+
+        }
+
+        public abstract string InsertString();
+
+        public abstract string InsertString(IMutator<T> mutator);
+
+        public abstract string DeleteString();
+
+        public abstract string UpdateString(IMutator<T> obj);
+
+        public abstract string UpdateString();
+
+        public abstract string FindByIdString(object id);
+    }
+}

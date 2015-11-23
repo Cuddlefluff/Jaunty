@@ -12,6 +12,9 @@ Well, I started a pet project, and I decided to try keeping it simple by just us
 This worked fine, but it turned out that writing and maintaining `INSERT` and `UPDATE` statements is extremely tedious and prone to errors.
 So I decided to go online and find something that could fix this problem for me, but most projects were either slow performers, or they had grown "overambitious" rather than just sticking to one thing.
 I think this is what makes Dapper popular - it doesn't try to exceed its own scope, and that's what I'm trying to do as well; make it do one thing and do it well.  
+
+There are also a couple interesting features I haven't seen anywhere else; the possibility of using multiple databases, as Tables can have the `[Database]` attribute which gives a database target for a table. (Not supported for PostgreSQL)  
+It's also possible to use multiple different types of databases, although then complexity increases slightly since the extension methods on `IDbConnection` will only be applicable for one database engine at the time (although you can switch at run-time I guess).
   
 **Ok, so over to some instructions**  
   
@@ -40,7 +43,7 @@ public class MyTable
 }
 ```
 All schema attributes are optional (except Key and DatabaseGenerated), as they have sane defaults : 
-Tablemame will default to the type name  
+Tablename will default to the type name  
 Properties will default to the field name  
 Schema will default to "dbo" for SQL Server and "public" for Postgre  
 Database will assume whatever's supplied in the connection string  
@@ -60,7 +63,7 @@ Alternatively for PostgreSQL
 
 ```sql
 CREATE TABLE "MyTable" (
-    "Id" SERIAL NOT NULL PRIMARY KEY CLUSTERED,
+    "Id" SERIAL NOT NULL PRIMARY KEY,
 	"Name" VARCHAR(100) NULL,
 	"Created" TIMESTAMP NOT NULL DEFAULT(clock_timestamp())
 )
@@ -73,6 +76,8 @@ Jaunty can also assign databases to tables, which was a requirement of mine beca
 Now, to insert some stuff..
 
 ```csharp
+
+using Jaunty;
 
 public void Test()
 {
@@ -114,6 +119,11 @@ public void Test()
 ```
 
 All methods also have collection and Async counterparts.
+
+**Notes about Postgre which you probably already know, but just in case..**
+
+- PostgreSQL does not support querying against multiple databases on one connection, so the `[Database]` attribute is useless, but I'll keep it just in case.  
+- PostgreSQL will change the casing of names to lower unless you enclose object names in quotes. Jaunty encloses, and so should you, or you'll end up having to add `[Column]` attributes to everything or alternatively not follow C# conventions.
 
 **MySQL**
 

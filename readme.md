@@ -1,6 +1,6 @@
 **Jaunty**  
   
-Hi, this is a little project I made for myself. It's a CRUD wrapper put on top of Dapper.
+Hi, this is a little project I made for myself. It's a CRUD wrapper put on top of Dapper for C# and .NET.
 It allows inserting, updating and deleting rows on the database.
   
 It's built with the intention of supporting multiple databases in a modular manner.
